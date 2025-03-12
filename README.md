@@ -6,9 +6,9 @@
 
 [陳廷威 40943212](Member/40943212.md)
 
-[俞漢威 41043136](https://github.com/maboloshi)
+[俞漢威 41043136](Member/40943136.md)
 
-[魏宇泰 41043252](https://github.com/maboloshi)
+[魏宇泰 41043252](Member/40943252.md)
 
 <!-- LINK GROUP -->
 
