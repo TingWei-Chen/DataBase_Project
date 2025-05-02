@@ -136,7 +136,7 @@
 
 ### 實體關係圖 (ER Diagram)
 
-![ER Diagram](docs/database/"ER Diagram.png")
+![ER Diagram](docs/database/ER%20Diagram.png)
 
 此 ER Diagram 展示了系統中各實體之間的關係，包括學生、教師、組別、週報等核心概念之間的關聯和基數限制。
 
