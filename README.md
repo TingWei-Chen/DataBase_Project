@@ -164,13 +164,13 @@ graph LR
 
 ### 實體關係圖 (ER Diagram)
 
-![ER Diagram](docs/database/ER%20Diagram.png)
+![er_diagram](docs/database/er_diagram.png)
 
 此 ER Diagram 展示了系統中各實體之間的關係，包括學生、教師、組別、週報等核心概念之間的關聯和基數限制。
 
 ### 資料庫結構圖 (Schema Diagram)
 
-[這裡插入 Schema Diagram 圖片]
+![er_diagram](docs/database/schema_diagram.png)
 
 Schema Diagram 展示了實際資料庫表格之間的關聯結構，包括外鍵關係和表格欄位的概覽。
 
