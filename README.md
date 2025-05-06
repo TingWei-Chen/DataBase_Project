@@ -309,13 +309,39 @@ Schema Diagram 展示了實際資料庫表格之間的關聯結構，包括外�
 
 ### Part III（待開始）
 
-## 👨‍💻 小組成員
+## 👨‍💻 開發者
 
-[陳廷威 40943212](docs/member/40943212.md)
+<div align="center">
+  
+![Profile Banner](https://img.shields.io/badge/Database%20Developer-MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)
 
-[俞漢威 41043136](docs/member/40943136.md)
+</div>
 
-[魏宇泰 41043252](docs/member/40943252.md)
+### 陳廷威 40943212
+
+我是「專題進度追蹤系統」的開發者，專精於資料庫設計與實作、系統架構規劃及前後端整合。在資料庫正規化設計與ACID特性實踐方面有深入研究經驗。
+
+#### 🧰 技術棧
+
+**資料庫技術**
+![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)
+![SQL](https://img.shields.io/badge/SQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+
+**後端/前端技術**
+![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+
+**開發工具**
+![JetBrains](https://img.shields.io/badge/JetBrains-000000?style=for-the-badge&logo=jetbrains&logoColor=white)
+![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
+
+#### 🔗 聯絡方式
+
+[![Email](https://img.shields.io/badge/Email-40943212%40gm.nfu.edu.tw-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:40943212@gm.nfu.edu.tw)
+[![GitHub](https://img.shields.io/badge/GitHub-TingWei--Chen-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/TingWei-Chen)
 
 <!-- LINK GROUP -->
 
