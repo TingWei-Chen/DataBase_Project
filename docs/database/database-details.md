@@ -761,15 +761,118 @@ COMMIT;
 
 2. **權限分離**：根據不同角色（學生、教師、管理員）設置不同的資料庫訪問權限。
 
-3. **SQL注入防護**：所有查詢使用參數化查詢或預處理語句。
+### 資料庫使用者與權限設計
 
-4. **敏感資料保護**：限制對敏感個人資訊的訪問。
+為確保系統安全性並遵循最小權限原則，本系統實施了嚴格的資料庫使用者權限控制：
 
-5. **審計追蹤**：系統日誌表記錄所有關鍵操作，便於追溯和審計。
+```sql
+-- 建立管理員使用者
+CREATE USER 'pts_admin'@'localhost' IDENTIFIED BY 'strong_password_here';
+-- 授予管理權限
+GRANT ALL PRIVILEGES ON pts_db.* TO 'pts_admin'@'localhost';
 
-6. **備份策略**：定期備份資料庫，確保資料安全。
+-- 建立應用程式使用者
+CREATE USER 'pts_app'@'%' IDENTIFIED BY 'strong_app_password';
+-- 授予應用程式操作所需的權限
+GRANT SELECT, INSERT, UPDATE, DELETE ON pts_db.* TO 'pts_app'@'%';
+-- 限制危險操作
+REVOKE DROP, ALTER, CREATE, GRANT OPTION ON pts_db.* FROM 'pts_app'@'%';
 
-7. **連接加密**：使用SSL/TLS加密資料庫連接。
+-- 建立教師角色
+CREATE USER 'pts_teacher'@'localhost' IDENTIFIED BY 'teacher_password';
+-- 授予教師操作的權限
+GRANT SELECT ON pts_db.* TO 'pts_teacher'@'localhost';
+GRANT INSERT, UPDATE ON pts_db.evaluation TO 'pts_teacher'@'localhost';
+GRANT INSERT, UPDATE ON pts_db.evaluation_item TO 'pts_teacher'@'localhost';
+GRANT INSERT, UPDATE ON pts_db.group TO 'pts_teacher'@'localhost';
+GRANT UPDATE ON pts_db.student TO 'pts_teacher'@'localhost';
+GRANT INSERT ON pts_db.notification TO 'pts_teacher'@'localhost';
+GRANT INSERT ON pts_db.system_log TO 'pts_teacher'@'localhost';
+
+-- 建立學生角色
+CREATE USER 'pts_student'@'localhost' IDENTIFIED BY 'student_password';
+-- 授予學生操作的有限權限
+GRANT SELECT ON pts_db.weekly_report WHERE student_id = CURRENT_USER_STUDENT_ID;
+GRANT SELECT ON pts_db.evaluation WHERE report_id IN (SELECT report_id FROM weekly_report WHERE student_id = CURRENT_USER_STUDENT_ID);
+GRANT INSERT ON pts_db.weekly_report TO 'pts_student'@'localhost';
+GRANT INSERT ON pts_db.file TO 'pts_student'@'localhost';
+
+-- 建立備份使用者
+CREATE USER 'pts_backup'@'localhost' IDENTIFIED BY 'backup_password';
+-- 授予備份操作的唯讀存取權
+GRANT SELECT, LOCK TABLES, SHOW VIEW, EVENT, TRIGGER ON pts_db.* TO 'pts_backup'@'localhost';
+
+-- 建立報表使用者
+CREATE USER 'pts_reporting'@'localhost' IDENTIFIED BY 'reporting_password';
+-- 授予生成報表的唯讀存取權
+GRANT SELECT ON pts_db.* TO 'pts_reporting'@'localhost';
+```
+
+為進一步實現行級安全性，系統使用視圖和預存程序限制使用者只能訪問與其角色相關的資料：
+
+```sql
+-- 建立視圖，使學生僅能看到自己的報告
+CREATE VIEW student_own_reports AS
+SELECT * FROM weekly_report
+WHERE student_id = (SELECT student_id FROM student WHERE user_id = @current_user_id);
+
+-- 授予對視圖而非表格的存取權
+GRANT SELECT ON pts_db.student_own_reports TO 'pts_student'@'localhost';
+```
+
+此外，系統還實作了資料庫安全相關的預存程序，例如學生提交週報的安全封裝：
+
+```sql
+-- 學生週報提交預存程序
+DELIMITER $$
+CREATE PROCEDURE submit_weekly_report(
+    IN p_student_id VARCHAR(20),
+    IN p_current_work TEXT,
+    IN p_next_plan TEXT,
+    IN p_week_number INT,
+    IN p_year INT
+)
+BEGIN
+    DECLARE p_user_id INT;
+    DECLARE p_report_id INT;
+    
+    -- 獲取用戶 ID
+    SELECT user_id INTO p_user_id FROM student WHERE student_id = p_student_id;
+    
+    -- 驗證使用者是否提交自己的報告
+    IF p_user_id = (SELECT user_id FROM user WHERE USER() = CONCAT(user.email, '@localhost')) THEN
+        START TRANSACTION;
+            -- 插入週報
+            INSERT INTO weekly_report (student_id, current_work, next_plan, week_number, year)
+            VALUES (p_student_id, p_current_work, p_next_plan, p_week_number, p_year);
+            
+            SET p_report_id = LAST_INSERT_ID();
+            
+            -- 記錄此操作
+            INSERT INTO system_log (user_id, action, entity_type, entity_id, description)
+            VALUES (p_user_id, 'create', 'report', p_report_id, CONCAT('已提交第 ', p_week_number, ' 週週報'));
+        COMMIT;
+    ELSE
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = '您只能提交自己的報告';
+    END IF;
+END$$
+DELIMITER ;
+
+-- 授予執行程序的權限
+GRANT EXECUTE ON PROCEDURE pts_db.submit_weekly_report TO 'pts_student'@'localhost';
+```
+
+以上權限設計確保了使用者只能訪問與其角色相關的資料和功能，嚴格執行最小權限原則，同時透過交易管理和預存程序增強資料操作的安全性。
+
+4. **SQL注入防護**：所有查詢使用參數化查詢或預處理語句。
+
+5. **敏感資料保護**：限制對敏感個人資訊的訪問。
+
+6. **審計追蹤**：系統日誌表記錄所有關鍵操作，便於追溯和審計。
+
+7. **備份策略**：定期備份資料庫，確保資料安全。
+
+8. **連接加密**：使用SSL/TLS加密資料庫連接。
 
 ## 附錄：資料庫設計思考過程
 
