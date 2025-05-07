@@ -268,6 +268,40 @@ Schema Diagram 展示了實際資料庫表格之間的關聯結構，包括外�
 - **前後端分離**：Axios 用於前端 API 請求
 - **資料庫存取**：JPA (Java) / Eloquent ORM (PHP)
 
+## 📂 後端架構設計
+
+本專案後端採用模組化設計，遵循 MVC 架構和 RESTful API 設計原則，確保系統的可擴展性和維護性。
+
+<div align="center">
+
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
+![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+
+</div>
+
+### 後端技術選型
+
+目前專案正在評估兩種後端技術實現方案：
+
+1. **[Spring Boot 實作方案](./docs/backend/spring-boot-structure.md)**：基於 Java 生態系統，提供強大的企業級功能
+2. **[Laravel 實作方案](./docs/backend/laravel-structure.md)**：基於 PHP 生態系統，開發速度快且易於部署
+
+### 核心功能模組
+
+- **認證與授權**：使用 JWT 實現無狀態身份驗證
+- **資料存取層**：使用 ORM 技術實現資料庫操作抽象
+- **服務層**：封裝核心業務邏輯
+- **API 控制器**：提供 RESTful 端點
+- **檔案處理**：管理文件上傳下載
+- **安全性實作**：防範 SQL 注入、XSS 等常見攻擊
+
+### 完整架構文檔
+
+關於更詳細的後端架構設計、目錄結構和實現細節，請參考：
+
+- **[Spring Boot 專案結構詳解](./docs/backend/spring-boot-structure.md)**：完整的 Spring Boot 實作指南
+- **[Laravel 專案結構詳解](./docs/backend/laravel-structure.md)**：完整的 Laravel 實作指南
+
 ## 📋 專案進度
 
 | 階段 | 說明 | 負責人員 | 狀態 |
