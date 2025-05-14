@@ -361,7 +361,7 @@ Schema Diagram 展示了實際資料庫表格之間的關聯結構，包括外�
 
 ## 📚 課堂練習與作業
 
-### [05/07 關聯式資料庫範例資料設計](./homework/DB_Exercise_0507.md)
+### [05/07 Appendix E Common data models](./homework/DB_Exercise_0507.md)
 
 ## 👨‍💻 開發者
 
