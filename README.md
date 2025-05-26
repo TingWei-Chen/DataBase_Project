@@ -1,30 +1,18 @@
-<div align="center">
-  <h1>🎯 專題進度追蹤系統</h1>
-  
-  ![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)
-  ![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
-  ![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
-  ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-  ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
-  ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
-  ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
-</div>
+# 🎯 專題進度追蹤系統
 
-## 📚 課堂練習與作業
-### [05/07 Appendix E Common data models](./homework/DB_Exercise_0507.md)
+![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 
 ## 👨‍💻 開發者
-
-<div align="center">
-  
-![Profile Banner](https://img.shields.io/badge/Database%20Developer-MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)
-
-</div>
 
 ### 陳廷威 40943212
 
 我是「專題進度追蹤系統」的開發者，致力於資料庫設計與實作、系統架構規劃及前後端整合。
-<br>
 正在對於資料庫正規化設計與ACID特性實踐方面進行深入研究。
 
 #### 🧰 技術棧
@@ -45,17 +33,12 @@
 [![Email](https://img.shields.io/badge/Email-40943212%40gm.nfu.edu.tw-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:40943212@gm.nfu.edu.tw)
 [![GitHub](https://img.shields.io/badge/GitHub-TingWei--Chen-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/TingWei-Chen)
 
-## 目錄
-1. [✨ 題目定義](#-題目定義)
-2. [👥 應用情境與使用案例](#-應用情境與使用案例)
-3. [🖥️ 系統需求說明](#️-系統需求說明)
-4. [📊 ER Diagram](#-er-diagram)
-5. [📝 完整性限制與資料庫設計](#-完整性限制與資料庫設計)
-6. [📋 專案進度](#-專案進度)
-7. [🛠️ 開發技術與工具](#️-開發技術與工具)
-8. [🎯 Final Project 完成進度](#-final-project-完成進度)
+## 📚 課堂練習與作業
+
+### **[📄 05/07 Appendix E Common data models](./homework/DB_Exercise_0507.md)**
 
 ## ✨ 題目定義
+
 專題進度追蹤系統是一個多用戶網頁應用平台，旨在幫助教師有效地追蹤和記錄學生的專題進展。系統支持三種用戶角色（學生、教師和管理員），提供專題管理、進度追蹤、評分回饋和記錄查看等功能。
 
 ## 👥 應用情境與使用案例
@@ -97,7 +80,7 @@
 
 ### 情境三：系統管理與專題分配調整
 
-**參與者**：系統管理員 - 管理員
+**參與者**：系統管理員
 
 **情境描述**：
 新學年開始，專題指導老師選擇時間已截止，同時系上來了新教授和轉學生。此外，系主任需要查看上一學年度的所有專題記錄作為參考。管理員需要處理這些系統管理任務。
@@ -170,81 +153,129 @@
   </tr>
 </table>
 
+## 📝 完整性限制
+
+### **[📄 完整性限制詳細說明](docs/database/database-details.md#完整性限制)**
+
+此連結包含完整的資料庫完整性限制機制說明，涵蓋實體完整性、參照完整性、值域完整性和用戶定義完整性的詳細實作。
+
 ## 📊 ER Diagram
 
 ![er_diagram](docs/database/er_diagram.png)
 
-## 📝 完整性限制與資料庫設計
+### ER Diagram 實體說明
 
-### <h2> [點此查看完整資料庫設計文檔](docs/database/database-details.md)</h2>
+#### 主要實體 (Entities)
 
-此文檔包含：
-- 完整性限制詳細說明
+1. **用戶 (User)**
+   - 屬性：用戶ID、姓名、電子郵件、密碼、用戶類型、建立日期、狀態
+   - 說明：系統中所有用戶的基本資訊
+
+2. **學生 (Student)**
+   - 屬性：學號、科系、入學年份
+   - 說明：學生特有的學術資訊
+
+3. **教師 (Teacher)**
+   - 屬性：教師編號、科系、職稱
+   - 說明：教師特有的職業資訊
+
+4. **組別 (Group)**
+   - 屬性：組別ID、組別名稱、專題名稱、建立日期
+   - 說明：專題組別的基本資訊
+
+5. **週報 (WeeklyReport)**
+   - 屬性：週報ID、本週工作、下週計畫、提交日期、週次、年份
+   - 說明：學生提交的週報內容
+
+6. **評分 (Evaluation)**
+   - 屬性：評分ID、分數、評語、評分日期
+   - 說明：教師對週報的評分記錄
+
+7. **學年度 (Academic_Year)**
+   - 屬性：學年ID、學年名稱、開始日期、結束日期、狀態
+   - 說明：管理不同學年度的資訊
+
+8. **評分標準 (Evaluation_Criteria)**
+   - 屬性：標準ID、名稱、描述、權重
+   - 說明：評分的具體標準和權重
+
+9. **檔案 (File)**
+   - 屬性：檔案ID、檔案名稱、檔案路徑、檔案大小、檔案類型、上傳日期
+   - 說明：系統中的檔案管理
+
+10. **通知 (Notification)**
+    - 屬性：通知ID、內容、類型、已讀狀態、建立日期
+    - 說明：系統通知訊息
+
+11. **系統日誌 (System_Log)**
+    - 屬性：日誌ID、操作類型、實體類型、實體ID、描述、IP位址、記錄時間
+    - 說明：系統操作記錄
+
+#### 主要關係 (Relationships)
+
+1. **用戶-學生**：一對一關係，一個用戶帳號對應一個學生身份
+2. **用戶-教師**：一對一關係，一個用戶帳號對應一個教師身份
+3. **教師-組別**：一對多關係，一位教師可指導多個組別
+4. **學生-組別**：多對一關係，多位學生屬於一個組別
+5. **學生-週報**：一對多關係，一位學生可提交多份週報
+6. **週報-評分**：一對一關係，一份週報對應一個評分記錄
+7. **教師-評分**：一對多關係，一位教師可評分多份週報
+8. **週報-檔案**：一對多關係，一份週報可包含多個檔案
+9. **學年度-組別**：一對多關係，一個學年度包含多個組別
+10. **學年度-評分標準**：一對多關係，一個學年度有多個評分標準
+
+## 📊 完整資料庫設計
+
+### **[📄 詳細資料庫設計文檔](docs/database/database-details.md)**
+
+此連結包含：
 - 12個核心資料表的完整SQL建立語句
-- 各表的範例測試資料
+- 各表的範例測試資料（每表至少10筆資料）
 - 資料庫用戶與權限設計
 - 典型查詢示例
 - 交易管理範例
-- ER Diagram實體與關係的詳細說明
+- VIEW設計與SQL語法
 
-## 📋 專案進度
+## 📋 專案進度與完成狀況
 
-| 階段 | 說明 | 負責人員 | 狀態 |
-|------|------|---------|------|
-| **規劃階段** | | | |
-| 需求分析 | 界定系統功能需求和非功能需求 | 陳廷威 | ✅ 已完成 |
-| 應用情境設計 | 撰寫使用案例和情境描述 | 陳廷威 | ✅ 已完成 |
-| **設計階段** | | | |
-| 系統架構設計 | 設計系統整體架構和組件關係 | 陳廷威 | ✅ 已完成 |
-| 資料庫設計 | 設計 ER Diagram 和詳細資料表結構 | 陳廷威 | ✅ 已完成 |
-| 使用者介面設計 | 設計各角色的使用者介面和互動流程 | 陳廷威 | ✅ 已完成 |
-| **開發階段** | | | |
-| 資料庫實作 | 建立資料庫並實作完整性限制 | 陳廷威 | ✅ 已完成 |
-| 使用者權限管理 | 實作資料庫使用者與權限控制 | 陳廷威 | ✅ 已完成 |
-| 後端框架評估 | 評估 Spring Boot 與 PHP 框架的適用性 | 陳廷威 | ⚠️ 進行中 |
-| 後端 API 開發 | 實作 RESTful API 和業務邏輯 | 陳廷威 | ⚠️ 進行中 |
-| 前端頁面開發 | 實作使用者介面和前後端整合 | 陳廷威 | 🕒 待開始 |
-| **測試階段** | | | |
-| 單元測試 | 對關鍵功能進行單元測試 | 陳廷威 | 🕒 待開始 |
-| 整合測試 | 測試前後端整合和系統功能 | 陳廷威 | 🕒 待開始 |
-| 壓力測試 | 測試系統在高負載下的表現 | 陳廷威 | 🕒 待開始 |
-| **部署階段** | | | |
-| 系統部署 | 將系統部署到正式環境 | 陳廷威 | 🕒 待開始 |
-| 使用者培訓 | 培訓系統使用者和維護人員 | 陳廷威 | 🕒 待開始 |
+| **Final Project 階段** | **項目內容** | **狀態** | **備註** |
+|------------------------|-------------|----------|---------|
+| **Part I** | | | |
+| | 題目定義 | ✅ 已完成 | 專題進度追蹤系統 |
+| | 應用情境與使用案例 | ✅ 已完成 | 三個主要使用情境 |
+| | 系統需求說明 | ✅ 已完成 | 功能需求分析 |
+| | 完整性限制 | ✅ 已完成 | 四種完整性機制 |
+| | ER Diagram及詳細說明 | ✅ 已完成 | 11個主要實體與關係 |
+| **Part II** | | | |
+| | 修正系統需求說明 | ✅ 已完成 | 根據回饋調整內容 |
+| | 修正 ER Diagram 與說明 | ✅ 已完成 | 優化實體關係設計 |
+| | 完整資料庫 Schema（SQL語法） | ✅ 已完成 | 12個核心資料表 |
+| | 範例資料說明 | ✅ 已完成 | 每表至少10筆測試資料 |
+| | 資料庫使用者與權限設計 | ✅ 已完成 | 角色權限控制機制 |
+| **Part III** | | | |
+| | 題目與需求整合 | ✅ 已完成 | 整合前兩階段內容 |
+| | ER Diagram 最終版 | ✅ 已完成 | 完整實體關係圖 |
+| | 完整 DB Schema 與說明 | ✅ 已完成 | 含VIEW與SQL語法 |
+| | 各資料表真實資料 | ✅ 已完成 | 每表10筆以上資料 |
+| | 系統實作成果 | ⚠️ 進行中 | 後端開發進行中 |
+| | 展示影片 | 🕒 待開始 | 預計系統完成後製作 |
+| **開發實作** | | | |
+| | 資料庫建置 | ✅ 已完成 | MariaDB環境建置 |
+| | 後端API開發 | ⚠️ 進行中 | 評估Laravel框架 |
+| | 前端介面開發 | 🕒 待開始 | 預計使用React |
+| | 系統整合 | 🕒 待開始 | 前後端整合測試 |
 
 ## 🛠️ 開發技術與工具
 
 ### 使用語言
-- **後端**：Java 17 / PHP 8.1 (測試評估中)
-- **前端**：HTML5, CSS3, JavaScript (ES6+)
+- **後端**：PHP 8.1 / Laravel 9
+- **前端**：HTML5, CSS3, JavaScript (ES6+), React
 - **資料庫**：SQL (MariaDB 10.6)
 
 ### 開發工具
-- **IDE**：
-  - IntelliJ IDEA 2023.1 (Java 後端開發)
-  - PhpStorm 2023.1 (PHP 後端開發)
-  - WebStorm 2023.1 (前端開發)
+- **IDE**：PhpStorm 2023.1, WebStorm 2023.1
 - **資料庫管理**：DataGrip 2023.1, phpMyAdmin
 - **版本控制**：Git, GitHub
 - **API 測試**：Postman
 - **前端框架**：React, Bootstrap 5
-- **後端框架**：Spring Boot 3.0 / Laravel 9 (測試評估中)
-
-## 🎯 Final Project 完成進度
-
-### Part I（已完成）
-- ✅ 題目定義
-- ✅ 應用情境與使用案例
-- ✅ 系統需求說明
-- ✅ 完整性限制
-- ✅ ER Diagram及詳細說明
-
-### Part II（已完成）
-- ✅ 修正系統需求說明
-- ✅ 修正 ER Diagram 與說明
-- ✅ 完整資料庫 Schema（SQL 語法）
-- ✅ 範例資料說明
-- ✅ 資料庫使用者與權限設計
-
-### Part III（待開始）
-- 🕒 待開始
+- **後端框架**：Laravel 9
