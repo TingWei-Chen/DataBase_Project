@@ -1,5 +1,174 @@
 # 專題進度追蹤系統 - 資料庫設計文檔
 
+## 資料庫使用者與權限設計
+
+### 權限分離原則
+基於最小權限原則和角色分離概念，設計多個資料庫使用者帳號，避免使用單一root帳號進行所有操作，確保系統安全性和操作可追蹤性。
+
+### 資料庫使用者設計
+
+#### 1. 資料庫管理員 (pts_admin)
+```sql
+CREATE USER 'pts_admin'@'localhost' IDENTIFIED BY 'Admin@2024PTS!';
+GRANT ALL PRIVILEGES ON project_tracking_system.* TO 'pts_admin'@'localhost';
+GRANT CREATE, DROP, ALTER ON *.* TO 'pts_admin'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+**權限範圍**：
+- 完整資料庫管理權限：可建立、刪除、修改資料表結構
+- 資料管理權限：可執行所有資料操作（增刪改查）
+- 使用者管理權限：可建立和管理其他資料庫使用者
+- 使用時機：系統維護、資料庫結構變更、初始化設定
+
+#### 2. 應用程式主要使用者 (pts_app)
+```sql
+CREATE USER 'pts_app'@'%' IDENTIFIED BY 'AppUser@2024PTS!';
+GRANT SELECT, INSERT, UPDATE, DELETE ON project_tracking_system.* TO 'pts_app'@'%';
+REVOKE DROP, ALTER, CREATE, INDEX ON project_tracking_system.* FROM 'pts_app'@'%';
+FLUSH PRIVILEGES;
+```
+
+**權限範圍**：
+- 資料操作權限：可執行基本的增刪改查操作
+- 禁止結構變更：不可修改資料表結構、建立索引
+- 網路存取：允許從任何主機連接（適合Web應用）
+- 使用時機：Web應用程式的主要資料庫連接
+
+#### 3. 教師角色使用者 (pts_teacher)
+```sql
+CREATE USER 'pts_teacher'@'localhost' IDENTIFIED BY 'Teacher@2024PTS!';
+GRANT SELECT ON project_tracking_system.users TO 'pts_teacher'@'localhost';
+GRANT SELECT ON project_tracking_system.students TO 'pts_teacher'@'localhost';
+GRANT SELECT ON project_tracking_system.groups TO 'pts_teacher'@'localhost';
+GRANT SELECT ON project_tracking_system.weekly_reports TO 'pts_teacher'@'localhost';
+GRANT SELECT ON project_tracking_system.academic_years TO 'pts_teacher'@'localhost';
+GRANT SELECT ON project_tracking_system.files TO 'pts_teacher'@'localhost';
+GRANT SELECT, INSERT, UPDATE ON project_tracking_system.evaluations TO 'pts_teacher'@'localhost';
+GRANT INSERT ON project_tracking_system.notifications TO 'pts_teacher'@'localhost';
+GRANT INSERT ON project_tracking_system.system_logs TO 'pts_teacher'@'localhost';
+GRANT UPDATE ON project_tracking_system.groups TO 'pts_teacher'@'localhost';
+GRANT UPDATE (group_id) ON project_tracking_system.students TO 'pts_teacher'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+**權限範圍**：
+- 查看權限：可查看學生資料、週報、組別資訊
+- 評分權限：可新增、修改評分記錄
+- 組別管理權限：可調整組別資訊和學生分組
+- 限制範圍：不可修改使用者帳號、密碼等敏感資料
+
+#### 4. 學生角色使用者 (pts_student)
+```sql
+CREATE USER 'pts_student'@'localhost' IDENTIFIED BY 'Student@2024PTS!';
+GRANT SELECT ON project_tracking_system.academic_years TO 'pts_student'@'localhost';
+GRANT SELECT ON project_tracking_system.groups TO 'pts_student'@'localhost';
+GRANT SELECT, INSERT ON project_tracking_system.weekly_reports TO 'pts_student'@'localhost';
+GRANT SELECT, INSERT ON project_tracking_system.files TO 'pts_student'@'localhost';
+GRANT SELECT ON project_tracking_system.evaluations TO 'pts_student'@'localhost';
+GRANT SELECT, UPDATE (is_read) ON project_tracking_system.notifications TO 'pts_student'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+**權限範圍**：
+- 週報提交權限：可新增週報和上傳檔案
+- 查看權限：可查看自己的評分和通知
+- 限制查看：僅能查看與自己相關的資料
+
+#### 5. 報表分析使用者 (pts_report)
+```sql
+CREATE USER 'pts_report'@'localhost' IDENTIFIED BY 'Report@2024PTS!';
+GRANT SELECT ON project_tracking_system.* TO 'pts_report'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+**權限範圍**：
+- 唯讀權限：僅可查詢所有資料表
+- 禁止修改：不可進行任何資料異動
+
+#### 6. 備份使用者 (pts_backup)
+```sql
+CREATE USER 'pts_backup'@'localhost' IDENTIFIED BY 'Backup@2024PTS!';
+GRANT SELECT, LOCK TABLES, SHOW VIEW, EVENT, TRIGGER ON project_tracking_system.* TO 'pts_backup'@'localhost';
+GRANT RELOAD, PROCESS ON *.* TO 'pts_backup'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+**權限範圍**：
+- 備份權限：可執行完整資料庫備份
+- 鎖定權限：備份過程中可鎖定資料表確保一致性
+
+### 權限驗證預存程序
+
+#### 學生週報提交驗證
+```sql
+DELIMITER $$
+CREATE PROCEDURE secure_submit_report(
+    IN p_student_id VARCHAR(20),
+    IN p_this_week_work TEXT,
+    IN p_next_week_plan TEXT,
+    IN p_week_number INT,
+    IN p_year_id INT
+)
+BEGIN
+    DECLARE current_user_id INT;
+    DECLARE student_user_id INT;
+    
+    SELECT user_id INTO current_user_id 
+    FROM users 
+    WHERE email = SUBSTRING_INDEX(USER(), '@', 1);
+    
+    SELECT user_id INTO student_user_id 
+    FROM students 
+    WHERE student_id = p_student_id;
+    
+    IF current_user_id = student_user_id THEN
+        INSERT INTO weekly_reports (student_id, group_id, this_week_work, next_week_plan, week_number, year_id)
+        SELECT p_student_id, s.group_id, p_this_week_work, p_next_week_plan, p_week_number, p_year_id
+        FROM students s WHERE s.student_id = p_student_id;
+        
+        INSERT INTO system_logs (user_id, action_type, table_name, description)
+        VALUES (current_user_id, 'create', 'weekly_reports', CONCAT('學生提交第', p_week_number, '週週報'));
+    ELSE
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = '權限不足：只能提交自己的週報';
+    END IF;
+END$$
+DELIMITER ;
+```
+
+#### 教師評分權限驗證
+```sql
+DELIMITER $$
+CREATE PROCEDURE secure_evaluate_report(
+    IN p_report_id INT,
+    IN p_teacher_id VARCHAR(20),
+    IN p_score INT,
+    IN p_comments TEXT
+)
+BEGIN
+    DECLARE report_group_teacher VARCHAR(20);
+    
+    SELECT g.teacher_id INTO report_group_teacher
+    FROM weekly_reports wr
+    JOIN groups g ON wr.group_id = g.group_id
+    WHERE wr.report_id = p_report_id;
+    
+    IF report_group_teacher = p_teacher_id THEN
+        INSERT INTO evaluations (report_id, teacher_id, score, comments)
+        VALUES (p_report_id, p_teacher_id, p_score, p_comments);
+        
+        INSERT INTO notifications (user_id, title, content, type)
+        SELECT s.user_id, '週報評分完成', CONCAT('您的週報已獲得評分：', p_score, '分'), 'evaluation'
+        FROM weekly_reports wr
+        JOIN students s ON wr.student_id = s.student_id
+        WHERE wr.report_id = p_report_id;
+    ELSE
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = '權限不足：只能評分自己指導組別的週報';
+    END IF;
+END$$
+DELIMITER ;
+```
+
 ## 1. 用戶資料表 (users)
 
 ### SQL建立語句
