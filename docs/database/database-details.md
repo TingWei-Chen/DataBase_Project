@@ -169,8 +169,6 @@ END$$
 DELIMITER ;
 ```
 
-# 專題進度追蹤系統 - 核心資料庫設計文檔 (第一部分)
-
 ## 1. 用戶資料表 (users)
 
 ### SQL建立語句
@@ -355,8 +353,6 @@ CREATE UNIQUE INDEX idx_groups_unique_name_year ON groups(group_name, year_id);
 | year_id | **非空約束 (NOT NULL)**：必須關聯到特定學年度<br>**外鍵約束 (FOREIGN KEY)**：與academic_years表的year_id建立參照關係<br>**限制刪除 (ON DELETE RESTRICT)**：不允許刪除已有組別的學年度<br>**參照完整性**：確保組別必須歸屬於有效的學年度<br>**資料型別**：INT，必須為正整數 |
 | created_at | **預設值約束 (DEFAULT CURRENT_TIMESTAMP)**：系統自動記錄組別建立時間<br>**資料型別**：DATETIME，格式YYYY-MM-DD HH:mm:ss<br>**時間範圍**：1000-01-01 00:00:00 到 9999-12-31 23:59:59<br>**不可更新**：組別建立後此欄位不應被修改 |
 | status | **列舉約束 (ENUM)**：只能輸入'active'、'completed'、'suspended'三種值<br>**預設值約束 (DEFAULT)**：新建組別預設為'active'狀態<br>**狀態定義**：active(進行中)、completed(已完成)、suspended(已暫停) |
-
-# 專題進度追蹤系統 - 核心資料庫設計文檔 (第二部分)
 
 ## 7. 週報資料表 (weekly_reports)
 
