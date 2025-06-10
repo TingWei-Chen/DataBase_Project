@@ -560,35 +560,20 @@ CREATE TABLE system_logs (
     -- 完整性限制
     CONSTRAINT chk_ip_address_format CHECK (
         ip_address IS NULL OR 
-        ip_address REGEXP '^([0-9]{1,3}\.){3}[0-9]{1,3}$|^([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}(FOREIGN KEY)**：與students表的student_id建立參照關係<br>**級聯刪除 (ON DELETE CASCADE)**：學生刪除時週報記錄同步刪除<br>**複合唯一約束 (UNIQUE KEY)**：與week_number、year_id組成複合唯一鍵<br>**格式要求**：必須為8位數字格式<br>**資料型別**：VARCHAR(20)，實際使用8個字元 |
-| group_id | **非空約束 (NOT NULL)**：必須關聯到特定組別<br>**外鍵約束 (FOREIGN KEY)**：與groups表的group_id建立參照關係<br>**級聯刪除 (ON DELETE CASCADE)**：組別刪除時週報記錄同步刪除<br>**資料型別**：INT，必須為正整數 |
-| week_number | **非空約束 (NOT NULL)**：必須填入週次<br>**範圍檢查約束 (CHECK)**：週次必須在1到18之間<br>**複合唯一約束 (UNIQUE KEY)**：與student_id、year_id組成複合唯一鍵<br>**學期制度**：對應18週制學期安排<br>**資料型別**：INT，範圍1-18 |
-| year_id | **非空約束 (NOT NULL)**：必須關聯到特定學年度<br>**外鍵約束 (FOREIGN KEY)**：與academic_years表的year_id建立參照關係<br>**限制刪除 (ON DELETE RESTRICT)**：不允許刪除已有週報的學年度<br>**複合唯一約束 (UNIQUE KEY)**：與student_id、week_number組成複合唯一鍵<br>**資料型別**：INT，必須為正整數 |
-| this_week_work | **非空約束 (NOT NULL)**：必須填入本週工作內容<br>**長度檢查約束 (CHECK)**：內容至少10個字元<br>**資料型別**：TEXT，最大65,535個字元<br>**字元集**：支援UTF-8編碼，容納中英文混合內容<br>**內容要求**：記錄學生本週實際完成的專題工作項目 |
-| next_week_plan | **非空約束 (NOT NULL)**：必須填入下週工作計畫<br>**長度檢查約束 (CHECK)**：內容至少10個字元<br>**資料型別**：TEXT，最大65,535個字元<br>**字元集**：支援UTF-8編碼，容納中英文混合內容<br>**內容要求**：記錄學生下週預計進行的專題工作安排 |
-| submitted_at | **預設值約束 (DEFAULT CURRENT_TIMESTAMP)**：系統自動記錄週報提交時間<br>**資料型別**：DATETIME，格式YYYY-MM-DD HH:mm:ss<br>**時間範圍**：1000-01-01 00:00:00 到 9999-12-31 23:59:59<br>**時效管理**：用於判定提交狀態和遲交情況 |
-| status | **列舉約束 (ENUM)**：只能輸入'submitted'、'late'、'missing'三種值<br>**預設值約束 (DEFAULT)**：預設為'submitted'狀態<br>**狀態定義**：submitted(已提交)、late(遲交)、missing(未交) |
-
-## 8. 評分資料表 (evaluations)
-
-### SQL建立語句
-```sql
-CREATE TABLE evaluations (
-    evaluation_id INT PRIMARY KEY AUTO_INCREMENT,
-    report_id INT NOT NULL UNIQUE,
-    teacher_id VARCHAR(20) NOT NULL,
-    score INT NOT NULL,
-    comments TEXT,
-    evaluated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    status ENUM('pending', 'completed') DEFAULT 'completed',
-    
-    -- 外鍵約束
-    FOREIGN KEY (report_id) REFERENCES weekly_reports(report_id) ON DELETE CASCADE,
-    FOREIGN KEY (teacher_id) REFERENCES teachers(teacher_id) ON DELETE RESTRICT,
-    
-    -- 完整性限制
-    CONSTRAINT chk_score_range CHECK (score BETWEEN 0 AND 100),
-    CONSTRAINT chk_comments_meaningful CHECK (comments IS NULL OR CHAR_LENGTH(comments) >= 5)
+        ip_address REGEXP '^([0-9]{1,3}\.){3}[0-9]{1,3}$|^([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}$'
+    )
 );
 ```
 
+### 完整性限制
+
+| 欄位名稱 | 完整性限制 |
+|---------|-----------|
+| log_id | **主鍵約束 (PRIMARY KEY)**：日誌記錄的唯一識別碼<br>**自動遞增 (AUTO_INCREMENT)**：從1開始自動遞增<br>**非空約束 (NOT NULL)**：主鍵自動具有非空屬性<br>**資料型別**：BIGINT，支援大量日誌記錄，範圍1-9223372036854775807 |
+| user_id | **可空值 (NULL)**：允許系統自動操作無關聯用戶的情況<br>**外鍵約束 (FOREIGN KEY)**：與users表的user_id建立參照關係<br>**設為空值 (ON DELETE SET NULL)**：用戶刪除時此欄位設為NULL，保持日誌完整性<br>**操作追蹤**：記錄執行操作的用戶身份<br>**資料型別**：INT，若不為NULL則必須為正整數 |
+| action_type | **非空約束 (NOT NULL)**：必須記錄操作類型<br>**列舉約束 (ENUM)**：只能輸入'login'、'logout'、'create'、'update'、'delete'、'view'六種值<br>**動作定義**：login(登入)、logout(登出)、create(新增)、update(更新)、delete(刪除)、view(檢視)<br>**審計分類**：用於系統操作的分類統計和安全審計 |
+| table_name | **可空值 (NULL)**：操作的資料表名稱為選填<br>**資料型別**：VARCHAR(50)，最多50個字元<br>**表格識別**：記錄資料庫操作涉及的表格名稱<br>**字元集**：支援英文表格名稱 |
+| record_id | **可空值 (NULL)**：操作的記錄識別碼為選填<br>**資料型別**：INT，記錄具體操作的資料記錄ID<br>**記錄追蹤**：與table_name配合定位具體的操作記錄 |
+| description | **可空值 (NULL)**：操作描述為選填<br>**資料型別**：TEXT，最大65,535個字元<br>**字元集**：支援UTF-8編碼，容納中英文描述<br>**詳細說明**：記錄操作的詳細說明和上下文資訊 |
+| ip_address | **可空值 (NULL)**：客戶端IP位址為選填<br>**格式檢查約束 (CHECK)**：支援IPv4和IPv6格式驗證<br>**IPv4格式**：三個點號分隔的四組1-3位數字，如192.168.1.1<br>**IPv6格式**：冒號分隔的十六進位格式<br>**資料型別**：VARCHAR(45)，容納IPv6的完整格式<br>**安全追蹤**：記錄操作來源的網路位址 |
+| created_at | **預設值約束 (DEFAULT CURRENT_TIMESTAMP)**：系統自動記錄日誌建立時間<br>**資料型別**：DATETIME，格式YYYY-MM-DD HH:mm:ss<br>**時間範圍**：1000-01-01 00:00:00 到 9999-12-31 23:59:59<br>**時序記錄**：確保日誌記錄的時間順序性<br>**高精度**：精確到秒級，支援時間序列分析 |
